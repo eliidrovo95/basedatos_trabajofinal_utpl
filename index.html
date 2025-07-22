@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- titulo de pagina -->
+  <title>Geoportal</title>
+
+  <link rel="preconnect" href="https://fonts.bunny.net" />
+  <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
+  <!-- Estilos -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!-- Librerias iniciales -->
+  <script src="js/jquery-3.6.0.js"></script>
+  <script src="js/componentes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ 
+  <!-- Estilos propios -->
+  <link rel="stylesheet" href="css/geoportal.css" />
+
+</head>
+
+<body class="font-sans antialiased" style="background-color: #dfdfdf !important">
+
+  
+  <!-- Pantalla trasera -->
+  <div class="position-absolute w-100" style="min-height: 40vh; background-color: #2c3d88"></div>
+
+  <!-- Contenido principal -->
+  <main class="main-content position-relative">
+
+    <!-- Header - titulo -->
+    <header class="p-4">
+      <div class="container-fluid d-flex flex-wrap justify-content-center text-center">
+        <h4>
+          <span class="fs-4 text-white">
+            <b>Geoportal de personas afectadas <br> por Deslizamientos, Innudaciones e Incidencias</b></span>
+        </h4>
+      </div>
+    </header>
+
+    <!-- Contenedor de mapa -->
+    <div class="container-fluid mt-1">
+      <div class="row">
+        <div class="col-lg-12" id="columna-mapa">
+          <div class="card z-index-0" style="height: 90vh; width: 100%; border-radius: 25px" id="card-mapa">
+            <div class="card-body" id="map"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de informacion -->
+    <div class="modal fade" id="modal-info" tabindex="-1" aria-labelledby="modal-info-label" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modal-info-label"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body" id="modal-info-body"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Boton de apertura de menu lateral -->
+  <button class="btn btn-bd-primary py-2 position-fixed bottom-0 end-0 mb-4 me-4 d-flex align-items-center" style="
+        background: #2c3d88 !important;
+        z-index: 2;
+        color: white;
+        border: 1px solid lightgrey;
+      " type="button" aria-expanded="false" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling"
+    aria-controls="offcanvasScrolling">
+    <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" fill="currentColor" class="bi bi-filter"
+      viewBox="0 0 16 16">
+      <path
+        d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5" />
+    </svg>
+  </button>
+
+  <!-- Menu lateral -->
+  <div class="offcanvas offcanvas-end" data-bs-scroll="false" data-bs-backdrop="false" tabindex="-1"
+    id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel"
+    style="margin: 0.5rem; border-radius: 25px; background: #f8f9fa">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Filtros</h5>
+      <button type="button" class="btn-close btn-close-filter" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div class="flex-shrink-0 p-3">
+        
+
+        <!--  -->
+        <a class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom"
+          data-bs-toggle="collapse" data-bs-target="#geografia-collapse" aria-expanded="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-globe-americas" viewBox="0 0 16 16">
+            <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0M2.04 4.326c.325 1.329 2.532 2.54 3.717 3.19.48.263.793.434.743.484q-.121.12-.242.234c-.416.396-.787.749-.758 1.266.035.634.618.824 1.214 1.017.577.188 1.168.38 1.286.983.082.417-.075.988-.22 1.52-.215.782-.406 1.48.22 1.48 1.5-.5 3.798-3.186 4-5 .138-1.243-2-2-3.5-2.5-.478-.16-.755.081-.99.284-.172.15-.322.279-.51.216-.445-.148-2.5-2-1.5-2.5.78-.39.952-.171 1.227.182.078.099.163.208.273.318.609.304.662-.132.723-.633.039-.322.081-.671.277-.867.434-.434 1.265-.791 2.028-1.12.712-.306 1.365-.587 1.579-.88A7 7 0 1 1 2.04 4.327Z"/>
+          </svg>
+          <span class="fs-5 fw-semibold" style="margin-left: 0.5rem !important;"> Geografía</span>
+        </a>
+        <div class="collapse show" id="geografia-collapse">
+
+          <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label small">Cantones</label>
+            <select class="form-select w-100" name="filtro_cantones" id="filtro_cantones"></select>
+          </div>
+          <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label small">Parroquias</label>
+            <select class="form-select w-100" name="filtro_parroquias" id="filtro_parroquias"></select>
+          </div>
+          
+        </div>
+
+        <!--  -->
+        <a class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom"
+          data-bs-toggle="collapse" data-bs-target="#capas-collapse" aria-expanded="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="16" fill="currentColor" class="bi bi-stack"
+            viewBox="0 0 16 16">
+            <path
+              d="m14.12 10.163 1.715.858c.22.11.22.424 0 .534L8.267 15.34a.6.6 0 0 1-.534 0L.165 11.555a.299.299 0 0 1 0-.534l1.716-.858 5.317 2.659c.505.252 1.1.252 1.604 0l5.317-2.66zM7.733.063a.6.6 0 0 1 .534 0l7.568 3.784a.3.3 0 0 1 0 .535L8.267 8.165a.6.6 0 0 1-.534 0L.165 4.382a.299.299 0 0 1 0-.535z" />
+            <path
+              d="m14.12 6.576 1.715.858c.22.11.22.424 0 .534l-7.568 3.784a.6.6 0 0 1-.534 0L.165 7.968a.299.299 0 0 1 0-.534l1.716-.858 5.317 2.659c.505.252 1.1.252 1.604 0z" />
+          </svg>
+          <span class="fs-5 fw-semibold">Capas</span>
+        </a>
+        <div class="collapse show" id="capas-collapse">
+          <div style="margin-left: 1rem !important" id="elementos-capas">
+
+            <!--  -->
+            <div class="form-check form-switch mb-2">
+              <input class="form-check-input capas_elemento" type="checkbox" role="switch" id="capa_sectores_personas_afectadas" />
+              <label class="form-check-label" for="capas_elemento">Sectores - personas afectadas</label>
+            </div>
+            <div style="padding: 1rem; display: none" id="grupo-opacidad-sectores_personas_afectadas">
+              <label for="opacity-range">Opacidad:</label>
+              <input class="ml-2" type="range" id="opacity-range-sectores_personas_afectadas" min="0" max="1" step="0.1" value="0.5" />
+              <span id="opacity-value-sectores_personas_afectadas">0.5</span>
+            </div>
+            <div style="padding: 1rem; display: none" id="grupo-detalles-sectores_personas_afectadas">
+
+              <div class="mb-3">
+                <label for="limite-datos-sectores_personas_afectadas" class="form-label small">Limite de datos</label>
+                <input type="number" class="form-control" aria-label="Numero de datos" value="100" id="limite-datos-sectores_personas_afectadas">
+              </div>
+
+              <div class="mb-3">
+                <label for="order-datos-sectores_personas_afectadas" class="form-label small">Orden de datos</label>
+                <select class="form-select w-100" id="order-datos-sectores_personas_afectadas">
+                  <option value="true">Más afectados</option>
+                  <option value="false" selected>Menos afectados</option>
+                </select>
+              </div>
+
+            </div>
+            <!--  -->
+
+            <div class="form-check form-switch mb-2">
+              <input class="form-check-input capas_elemento" type="checkbox" role="switch" id="capa_deslizamientos" />
+              <label class="form-check-label" for="capas_elemento">Deslizamientos</label>
+            </div>
+            <div style="padding: 1rem; display: none" id="grupo-opacidad-deslizamientos">
+              <label for="opacity-range">Opacidad:</label>
+              <input class="ml-2" type="range" id="opacity-range-deslizamientos" min="0" max="1" step="0.1" value="0.5" />
+              <span id="opacity-value-deslizamientos">0.5</span>
+            </div>
+
+            <!--  -->
+
+            <div class="form-check form-switch mb-2">
+              <input class="form-check-input capas_elemento" type="checkbox" role="switch" id="capa_inundaciones" />
+              <label class="form-check-label" for="capas_elemento">Inundaciones</label>
+            </div>
+            <div style="padding: 1rem; display: none" id="grupo-opacidad-inundaciones">
+              <label for="opacity-range">Opacidad:</label>
+              <input class="ml-2" type="range" id="opacity-range-inundaciones" min="0" max="1" step="0.1" value="0.5" />
+              <span id="opacity-value-inundaciones">0.5</span>
+            </div>
+            <!--  -->
+            
+          </div>
+        </div>
+
+        <!--  -->
+        <a class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom"
+          data-bs-toggle="collapse" data-bs-target="#puntos-collapse" aria-expanded="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="16" fill="currentColor" class="bi bi-stack"
+            viewBox="0 0 16 16">
+            <path
+              d="m14.12 10.163 1.715.858c.22.11.22.424 0 .534L8.267 15.34a.6.6 0 0 1-.534 0L.165 11.555a.299.299 0 0 1 0-.534l1.716-.858 5.317 2.659c.505.252 1.1.252 1.604 0l5.317-2.66zM7.733.063a.6.6 0 0 1 .534 0l7.568 3.784a.3.3 0 0 1 0 .535L8.267 8.165a.6.6 0 0 1-.534 0L.165 4.382a.299.299 0 0 1 0-.535z" />
+            <path
+              d="m14.12 6.576 1.715.858c.22.11.22.424 0 .534l-7.568 3.784a.6.6 0 0 1-.534 0L.165 7.968a.299.299 0 0 1 0-.534l1.716-.858 5.317 2.659c.505.252 1.1.252 1.604 0z" />
+          </svg>
+          <span class="fs-5 fw-semibold">Puntos</span>
+        </a>
+        <div class="collapse show" id="puntos-collapse">
+          <div style="margin-left: 1rem !important" id="elementos-capas">
+
+            
+            <!--  -->
+            <div class="form-check form-switch mb-2">
+              <input class="form-check-input capas_elemento" type="checkbox" role="switch" id="capa_incidencias" />
+              <label class="form-check-label" for="capas_elemento">Incidencias</label>
+            </div>
+
+          </div>
+        </div>
+        
+        <!--  -->
+        <hr>
+        <div class="mb-3">
+            <button type="button" class="btn btn-success w-100 btn-graficar" style="border-radius: 25px">
+              Visualizar datos
+            </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Librerias -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.browser.print/dist/leaflet.browser.print.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- Logica propia -->
+  <script src="js/geoportal.js"></script>
+
+</body>
+
+</html>
